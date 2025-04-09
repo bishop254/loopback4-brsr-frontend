@@ -27,7 +27,7 @@ const BrsrReportPage = () => {
     setIsLoading(true);
     try {
       const fileName = type === "pdf" ? "BRSR_Report.pdf" : "BRSR_Report.docx";
-
+  
       const response = await axios.post(
         `http://127.0.0.1:3000/report/download/${type}`,
         { selected },
@@ -35,7 +35,7 @@ const BrsrReportPage = () => {
           responseType: "blob",
         }
       );
-
+  
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -101,6 +101,14 @@ const BrsrReportPage = () => {
               Future updates will include automated data and formula-driven
               metrics for this principle.
             </p>
+            <div className="mt-4">
+              <h2 className="text-xl font-semibold mb-2">Report Structure</h2>
+              <ul>
+                <li>Page 1: Index</li>
+                <li>Page 2: Selected Principle Details</li>
+                <li>Further sections will follow based on the selected principle</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       </main>
