@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import axios from "axios";
-import styles from "./BrsrReport.module.css";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 const principles = [
   "Principle 1: Ethics and Transparency",
@@ -25,8 +28,9 @@ const BrsrReportPage = () => {
     try {
       const fileName = type === "pdf" ? "BRSR_Report.pdf" : "BRSR_Report.docx";
 
-      const response = await axios.get(
+      const response = await axios.post(
         `http://127.0.0.1:3000/report/download/${type}`,
+        { selected },
         {
           responseType: "blob",
         }
@@ -49,37 +53,56 @@ const BrsrReportPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <aside className={styles.sidebar}>
-        <h3>Index</h3>
-        <ul>
-          {principles.map((p) => (
-            <li
-              key={p}
-              className={selected === p ? styles.active : ""}
-              onClick={() => setSelected(p)}
-            >
-              {p}
-            </li>
-          ))}
-        </ul>
-        <div className={styles.exportButtons}>
-          <button onClick={() => exportReport("pdf")} disabled={isLoading}>
+    <div className="flex min-h-screen bg-muted/50">
+      <aside className="w-64 border-r p-4 bg-white">
+        <h3 className="text-lg font-semibold mb-4">BRSR Report Index</h3>
+        <ScrollArea className="h-[60vh] pr-2">
+          <ul className="space-y-2">
+            {principles.map((p) => (
+              <li
+                key={p}
+                onClick={() => setSelected(p)}
+                className={cn(
+                  "cursor-pointer p-2 rounded-md hover:bg-muted transition",
+                  selected === p ? "bg-primary text-primary-foreground" : ""
+                )}
+              >
+                {p}
+              </li>
+            ))}
+          </ul>
+        </ScrollArea>
+        <div className="mt-6 space-y-2">
+          <Button
+            onClick={() => exportReport("pdf")}
+            disabled={isLoading}
+            className="w-full"
+          >
             {isLoading ? "Exporting PDF..." : "Export PDF"}
-          </button>
-          <button onClick={() => exportReport("word")} disabled={isLoading}>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => exportReport("word")}
+            disabled={isLoading}
+            className="w-full"
+          >
             {isLoading ? "Exporting Word..." : "Export Word"}
-          </button>
+          </Button>
         </div>
       </aside>
-      <main className={styles.content}>
-        <h1>{selected}</h1>
-        <p>
-          This is a placeholder description for <strong>{selected}</strong>.
-          <br />
-          Future updates will include automated data and formula-driven metrics
-          for this principle.
-        </p>
+
+      <main className="flex-1 p-6">
+        <Card>
+          <CardContent className="p-6">
+            <h1 className="text-2xl font-bold mb-4">{selected}</h1>
+            <p>
+              This is a placeholder description for <strong>{selected}</strong>.
+              <br />
+              Future updates will include automated data and formula-driven
+              metrics for this principle.
+            </p>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
